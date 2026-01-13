@@ -42,15 +42,15 @@ export const getHomeInfo = async (req,res) => {
     const responseData = {
       spotlightAnimes: spotlights,
       trendingAnimes: trending,
-      latestEpisodeAnimes: latestEpisode,
+      latestEpisodeAnimes: latestEpisode[0],
       top10Animes: topTen,
-      topAiringAnimes: topAiring,
-      topUpcomingAnimes: topUpcoming,
-      mostPopularAnimes: mostPopular,
-      mostFavoriteAnimes: mostFavorite,
-      latestCompletedAnimes: latestCompleted,
+      topAiringAnimes: topAiring[0],
+      topUpcomingAnimes: topUpcoming[0],
+      mostPopularAnimes: mostPopular[0],
+      mostFavoriteAnimes: mostFavorite[0],
+      latestCompletedAnimes: latestCompleted[0],
       genres,
-      latestAddedAnimes: recentlyAdded,
+      latestAddedAnimes: recentlyAdded[0],
     };
 
     // setCachedData(cacheKey, responseData).catch((err) => {

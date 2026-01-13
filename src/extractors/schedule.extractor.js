@@ -18,13 +18,11 @@ export default async function extractSchedule(date, tzOffset) {
         .attr("href")
         .split("?")[0]
         .replace("/", "");
-      const data_id = id?.split("-").pop();
       const title = $(element).find(".film-name").text().trim();
       const japanese_title = $(element)
         .find(".film-name")
         .attr("data-jname")
         ?.trim();
-      const releaseDate = date;
       const time = $(element).find(".time").text().trim();
       const episode_no = $(element)
         ?.find(".btn-play")
@@ -32,14 +30,19 @@ export default async function extractSchedule(date, tzOffset) {
         .trim()
         .split(" ")
         .pop();
+
+      // Compute airing timestamp
+      const airingTimestamp = new Date(`${date}T${time}:00`).getTime() - tzOffset * 60 * 1000;
+      const secondsUntilAiring = Math.floor((airingTimestamp - Date.now()) / 1000);
+
       results.push({
         id,
-        data_id,
-        title,
-        japanese_title,
-        releaseDate,
         time,
-        episode_no,
+        name: title,
+        jname: japanese_title,
+        airingTimestamp,
+        secondsUntilAiring,
+        episode: parseInt(episode_no) || 0,
       });
     });
 
