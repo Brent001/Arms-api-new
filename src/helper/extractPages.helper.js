@@ -102,6 +102,17 @@ async function extractPage(page, params) {
         
         let result = { id, name: title, jname: japanese_title, poster };
         
+        // Add fields for category params
+        if (params.startsWith("genre/") || params.startsWith("producer/") || ["tv", "movie", "ova", "special", "ona"].includes(params)) {
+          result.duration = tvInfo.duration;
+          result.type = tvInfo.showType;
+          result.rating = adultContent ? "18+" : null;
+          result.episodes = { 
+            sub: tvInfo.sub ? parseInt(tvInfo.sub) : null, 
+            dub: tvInfo.dub ? parseInt(tvInfo.dub) : null 
+          };
+        }
+        
         if (params === "recently-updated" || params === "recently-added") {
           result.duration = tvInfo.duration;
           result.type = tvInfo.showType;
@@ -115,18 +126,12 @@ async function extractPage(page, params) {
           result.type = tvInfo.showType + " (? eps)";
           result.rating = null;
           result.episodes = { sub: null, dub: null };
-        } else if (params === "top-airing" || params === "most-popular" || params === "most-favorite" || params === "completed" || params.startsWith("genre/")) {
-          if (params.startsWith("genre/")) {
-            result.duration = tvInfo.duration;
-            result.type = tvInfo.showType;
-            result.rating = adultContent ? "18+" : null;
-          } else {
-            result.type = tvInfo.showType;
-          }
+        } else if (params === "top-airing" || params === "most-popular" || params === "most-favorite" || params === "completed") {
           result.episodes = { 
             sub: tvInfo.sub ? parseInt(tvInfo.sub) : null, 
             dub: tvInfo.dub ? parseInt(tvInfo.dub) : null 
           };
+          result.type = tvInfo.showType;
         }
         return result;
       }).get() // IMPORTANT: Convert cheerio object to array
