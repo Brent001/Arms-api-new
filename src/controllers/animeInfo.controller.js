@@ -20,6 +20,33 @@ export const getAnimeInfo = async (req, res) => {
     // Fetch most popular animes
     const mostPopularAnimes = await extractPage(1, "most-popular");
 
+    // Map related and recommended animes
+    const mappedRelatedAnimes = (animeData.related_data || []).map(item => ({
+      id: item.id,
+      name: item.title,
+      jname: item.japanese_title,
+      poster: item.poster,
+      episodes: {
+        sub: item.tvInfo.sub ? parseInt(item.tvInfo.sub) : null,
+        dub: item.tvInfo.dub ? parseInt(item.tvInfo.dub) : null
+      },
+      type: item.tvInfo.showType
+    }));
+
+    const mappedRecommendedAnimes = (animeData.recommended_data || []).map(item => ({
+      id: item.id,
+      name: item.title,
+      jname: item.japanese_title,
+      poster: item.poster,
+      duration: item.tvInfo.duration,
+      type: item.tvInfo.showType,
+      rating: item.adultContent ? "18+" : null,
+      episodes: {
+        sub: item.tvInfo.sub ? parseInt(item.tvInfo.sub) : null,
+        dub: item.tvInfo.dub ? parseInt(item.tvInfo.dub) : null
+      }
+    }));
+
     const responseData = {
       anime: {
         info: {
@@ -57,8 +84,8 @@ export const getAnimeInfo = async (req, res) => {
       },
       seasons: seasons || [],
       mostPopularAnimes: mostPopularAnimes[0] || [],
-      relatedAnimes: animeData.related_data || [],
-      recommendedAnimes: animeData.recommended_data || [],
+      relatedAnimes: mappedRelatedAnimes,
+      recommendedAnimes: mappedRecommendedAnimes,
     };
     // setCachedData(cacheKey, responseData).catch((err) => {
     //   console.error("Failed to set cache:", err);

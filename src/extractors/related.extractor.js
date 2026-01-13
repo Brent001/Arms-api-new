@@ -1,8 +1,6 @@
 export default async function extractRelatedData($) {
-  const relatedSection = $('#main-sidebar .block_area:has(.cat-heading:contains("Related Anime"))');
-
-  const relatedElements = relatedSection.find(
-    ".anif-block-ul .ulclear li"
+  const relatedElements = $(
+    "#main-sidebar .block_area.block_area_sidebar.block_area-realtime:nth-of-type(1) .anif-block-ul ul li"
   );
 
   return await Promise.all(
