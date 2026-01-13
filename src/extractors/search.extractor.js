@@ -113,64 +113,59 @@ async function extractSearchResults(params = {}) {
           ?.attr("href")
           ?.slice(1)
           .split("?ref=search")[0] || null;
+      const title = $(el)
+        .find(".film-detail .film-name .dynamic-name")
+        ?.text()
+        ?.trim();
+      const japanese_title =
+        $(el)
+          .find(".film-detail .film-name .dynamic-name")
+          ?.attr("data-jname")
+          ?.trim() || null;
+      const poster =
+        $(el)
+          .find(".film-poster .film-poster-img")
+          ?.attr("data-src")
+          ?.trim() || null;
+      const duration =
+        $(el)
+          .find(".film-detail .fd-infor .fdi-item.fdi-duration")
+          ?.text()
+          ?.trim();
+      const showType =
+        $(el)
+          .find(".film-detail .fd-infor .fdi-item:nth-of-type(1)")
+          .text()
+          .trim() || "Unknown";
+      const rating = $(el).find(".film-poster .tick-rate")?.text()?.trim() || null;
+      const sub =
+        Number(
+          $(el)
+            .find(".film-poster .tick-sub")
+            ?.text()
+            ?.trim()
+            .split(" ")
+            .pop()
+        ) || null;
+      const dub =
+        Number(
+          $(el)
+            .find(".film-poster .tick-dub")
+            ?.text()
+            ?.trim()
+            .split(" ")
+            .pop()
+        ) || null;
+      
       result.push({
         id: id,
-        data_id: $(el)
-          .find(".film-poster .film-poster-ahref").attr("data-id"),
-        title: $(el)
-          .find(".film-detail .film-name .dynamic-name")
-          ?.text()
-          ?.trim(),
-        japanese_title:
-          $(el)
-            .find(".film-detail .film-name .dynamic-name")
-            ?.attr("data-jname")
-            ?.trim() || null,
-        poster:
-          $(el)
-            .find(".film-poster .film-poster-img")
-            ?.attr("data-src")
-            ?.trim() || null,
-        duration:
-          $(el)
-            .find(".film-detail .fd-infor .fdi-item.fdi-duration")
-            ?.text()
-            ?.trim(),
-        tvInfo: {
-          showType:
-            $(el)
-              .find(".film-detail .fd-infor .fdi-item:nth-of-type(1)")
-              .text()
-              .trim() || "Unknown",
-          rating: $(el).find(".film-poster .tick-rate")?.text()?.trim() || null,
-          sub:
-            Number(
-              $(el)
-                .find(".film-poster .tick-sub")
-                ?.text()
-                ?.trim()
-                .split(" ")
-                .pop()
-            ) || null,
-          dub:
-            Number(
-              $(el)
-                .find(".film-poster .tick-dub")
-                ?.text()
-                ?.trim()
-                .split(" ")
-                .pop()
-            ) || null,
-          eps:
-            Number(
-              $(el)
-                .find(".film-poster .tick-eps")
-                ?.text()
-                ?.trim()
-                .split(" ")
-                .pop()
-            ) || null,
-        },
+        name: title,
+        jname: japanese_title,
+        poster: poster,
+        duration: duration,
+        type: showType,
+        rating: rating,
+        episodes: { sub: sub, dub: dub },
       });
     });
 
