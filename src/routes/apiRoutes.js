@@ -58,6 +58,10 @@ export const createApiRoutes = (app, jsonResponse, jsonError) => {
     categoryController.getCategory(req, res, `genre/${req.params.genreName}`)
   );
 
+  createRoute("/api/v2/hianime/category/:categoryName", (req, res) =>
+    categoryController.getCategory(req, res, req.params.categoryName)
+  );
+
   routeTypes
     .filter((routeType) => !routeType.startsWith("genre/"))
     .forEach((routeType) =>
