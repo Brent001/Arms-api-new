@@ -103,7 +103,7 @@ async function extractPage(page, params) {
         let result = { id, name: title, jname: japanese_title, poster };
         
         // Add fields for category params
-        if (params.startsWith("genre/") || params.startsWith("producer/") || ["tv", "movie", "ova", "special", "ona"].includes(params)) {
+        if (params.startsWith("genre/") || params.startsWith("producer/") || ["tv", "movie", "ova", "special", "ona", "subbed-anime"].includes(params)) {
           result.duration = tvInfo.duration;
           result.type = tvInfo.showType;
           result.rating = adultContent ? "18+" : null;
@@ -113,7 +113,7 @@ async function extractPage(page, params) {
           };
         }
         
-        if (params === "recently-updated" || params === "recently-added") {
+        if (params === "recently-updated" || params === "recently-added" || params === "subbed-anime" || params === "dubbed-anime") {
           result.duration = tvInfo.duration;
           result.type = tvInfo.showType;
           result.rating = adultContent ? "18+" : null;

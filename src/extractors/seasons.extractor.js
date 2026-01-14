@@ -19,7 +19,7 @@ async function extractSeasons(id) {
           .find(".season-poster")
           .attr("style")
           .match(/url\((.*?)\)/)[1];
-        return { id, name: season, title, poster: season_poster, isCurrent: false };
+        return { id, data_number, data_id, season, title, season_poster };
       })
       .get();
     return seasons;
