@@ -17,12 +17,12 @@ export const getAnimeInfo = async (req, res) => {
       extractSeasons(id),
     ]);
 
-    let seasonsList = (seasons || []).map(s => ({
+    let seasonsList = (seasons || []).filter(s => s.id !== animeData.id).map(s => ({
       id: s.id,
-      name: s.name,
-      title: s.title,
+      name: s.title,
+      title: s.name,
       poster: s.poster,
-      isCurrent: s.isCurrent
+      isCurrent: false
     }));
 
     // Add current season
