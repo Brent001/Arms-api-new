@@ -4,7 +4,7 @@ export const getQtip = async (req) => {
   try {
     const { id } = req.params;
     const data = await extractQtip(id);
-    return data;
+    return { anime: data };
   } catch (e) {
     console.error(e);
     return e;

@@ -3,14 +3,13 @@ import getTrending from "../extractors/trending.extractor.js";
 import extractPage from "../helper/extractPages.helper.js";
 import extractTopTen from "../extractors/topten.extractor.js";
 import { routeTypes } from "../routes/category.route.js";
-import extractSchedule from "../extractors/schedule.extractor.js";
 import { getCachedData, setCachedData } from "../helper/cache.helper.js";
 
 const genres = routeTypes
   .slice(0, 41)
   .map((genre) => genre.replace("genre/", ""));
 
-export const getHomeInfo = async (req, res) => {
+export const getHomeInfo = async (req,res) => {
   // const cacheKey = "homeInfo";
   try {
     // const cachedResponse = await getCachedData(cacheKey);
@@ -21,7 +20,6 @@ export const getHomeInfo = async (req, res) => {
       spotlights,
       trending,
       topTen,
-      schedule,
       topAiring,
       mostPopular,
       mostFavorite,
@@ -33,7 +31,6 @@ export const getHomeInfo = async (req, res) => {
       getSpotlights(),
       getTrending(),
       extractTopTen(),
-      extractSchedule(new Date().toISOString().split("T")[0]),
       extractPage(1, "top-airing"),
       extractPage(1, "most-popular"),
       extractPage(1, "most-favorite"),
@@ -42,21 +39,18 @@ export const getHomeInfo = async (req, res) => {
       extractPage(1, "top-upcoming"),
       extractPage(1, "recently-added"),
     ]);
-
     const responseData = {
-      success: true,
-      data: {
-        genres,
-        latestEpisodeAnimes: latestEpisode[0],
-        spotlightAnimes: spotlights,
-        top10Animes: topTen,
-        topAiringAnimes: topAiring[0],
-        topUpcomingAnimes: topUpcoming[0],
-        trendingAnimes: trending,
-        mostPopularAnimes: mostPopular[0],
-        mostFavoriteAnimes: mostFavorite[0],
-        latestCompletedAnimes: latestCompleted[0],
-      },
+      spotlightAnimes: spotlights,
+      trendingAnimes: trending,
+      latestEpisodeAnimes: latestEpisode[0],
+      top10Animes: topTen,
+      topAiringAnimes: topAiring[0],
+      topUpcomingAnimes: topUpcoming[0],
+      mostPopularAnimes: mostPopular[0],
+      mostFavoriteAnimes: mostFavorite[0],
+      latestCompletedAnimes: latestCompleted[0],
+      genres,
+      latestAddedAnimes: recentlyAdded[0],
     };
 
     // setCachedData(cacheKey, responseData).catch((err) => {
@@ -65,9 +59,6 @@ export const getHomeInfo = async (req, res) => {
     return responseData;
   } catch (fetchError) {
     console.error("Error fetching fresh data:", fetchError);
-    return {
-      success: false,
-      error: fetchError.message || "Failed to fetch home data"
-    };
+    return fetchError;
   }
 };

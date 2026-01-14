@@ -15,8 +15,8 @@ async function extractTopTen() {
         `#main-sidebar .block_area-realtime .block_area-content ul:eq(${idx})>li`
       )
         .map((index, element) => {
-          const rank = parseInt($(".film-number>span", element).text().trim()) || index + 1;
-          const name = $(".film-detail>.film-name>a", element).text().trim();
+          const number = $(".film-number>span", element).text().trim();
+          const title = $(".film-detail>.film-name>a", element).text().trim();
           const poster = $(".film-poster>img", element).attr("data-src");
           const japanese_title = $(".film-detail>.film-name>a", element)
             .attr("data-jname")
@@ -26,18 +26,21 @@ async function extractTopTen() {
             .attr("href")
             .split("/")
             .pop();
-          
-          const episodes = {
-            sub: parseInt($(`.tick .tick-sub`, element).text().trim()) || 0,
-            dub: parseInt($(`.tick .tick-dub`, element).text().trim()) || 0,
-          };
+          const tvInfo = ["sub", "dub", "eps"].reduce((info, property) => {
+            const value = $(`.tick .tick-${property}`, element).text().trim();
+            if (value) {
+              info[property] = value;
+            }
+            return info;
+          }, {});
 
           return { 
             id, 
-            name, 
+            rank: parseInt(number), 
+            name: title, 
+            jname: japanese_title, 
             poster, 
-            rank,
-            episodes 
+            episodes: { sub: tvInfo.sub ? parseInt(tvInfo.sub) : null, dub: tvInfo.dub ? parseInt(tvInfo.dub) : null } 
           };
         })
         .get();

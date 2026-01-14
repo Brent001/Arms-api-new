@@ -4,6 +4,7 @@ import formatTitle from "../helper/formatTitle.helper.js";
 import { v1_base_url } from "../utils/base_v1.js";
 import extractRecommendedData from "./recommend.extractor.js";
 import extractRelatedData from "./related.extractor.js";
+import extractPopularData from "./popular.extractor.js";
 
 async function extractAnimeInfo(id) {
   try {
@@ -32,6 +33,7 @@ async function extractAnimeInfo(id) {
       if (el.hasClass("tick-quality")) tvInfo.quality = text;
       else if (el.hasClass("tick-sub")) tvInfo.sub = text;
       else if (el.hasClass("tick-dub")) tvInfo.dub = text;
+      else if (el.hasClass("tick-eps")) tvInfo.eps = text;
       else if (el.hasClass("tick-pg")) tvInfo.rating = text;
       else if (el.is("span.item")) {
         if (!tvInfo.showType) tvInfo.showType = text;
@@ -75,6 +77,27 @@ async function extractAnimeInfo(id) {
       animeInfo[key] = value;
     });
 
+    const trailers = [];
+    $('.block_area-promotions-list .screen-items .item').each((_, element) => {
+      const el = $(element);
+      const title = el.attr('data-title');
+      const url = el.attr('data-src');
+      if (url) {
+        const fullUrl = url.startsWith('//') ? `https:${url}` : url;
+        let videoId = null;
+        const match = fullUrl.match(/\/embed\/([^?&]+)/);
+        if (match && match[1]) {
+          videoId = match[1];
+        }
+        trailers.push({
+          title: title || null,
+          url: fullUrl,
+          thumbnail: videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null
+        });
+      }
+    });
+    animeInfo.trailers = trailers;
+
     const season_id = formatTitle(title, data_id);
     animeInfo["Overview"] = overviewElement.text().trim();
     animeInfo["tvInfo"] = tvInfo;
@@ -85,9 +108,10 @@ async function extractAnimeInfo(id) {
       adultContent = true;
     }
 
-    const [recommended_data, related_data] = await Promise.all([
+    const [recommended_data, related_data, popular_data] = await Promise.all([
       extractRecommendedData($),
       extractRelatedData($),
+      extractPopularData($),
     ]);
     let charactersVoiceActors = [];
     if (characterHtml) {
@@ -160,6 +184,7 @@ async function extractAnimeInfo(id) {
       charactersVoiceActors,
       recommended_data,
       related_data,
+      popular_data,
     };
   } catch (e) {
     console.error("Error extracting anime info:", e);
