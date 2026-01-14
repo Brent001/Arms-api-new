@@ -32,7 +32,7 @@ export async function extractServers(id) {
   }
 }
 
-async function extractStreamingInfo(id, name, type, fallback) {
+async function extractStreamingInfo(id, name, type) {
   try {
     const servers = await extractServers(id.split("?ep=").pop());
     let requestedServer = servers.filter(
@@ -47,19 +47,16 @@ async function extractStreamingInfo(id, name, type, fallback) {
           server.type.toLowerCase() === "raw"
       );
     }
-    if (requestedServer.length === 0 && !(fallback && name.toLowerCase() === "hd-4")) {
+    if (requestedServer.length === 0) {
       throw new Error(
         `No matching server found for name: ${name}, type: ${type}`
       );
     }
-    // For hd-4 fallback, use a dummy data_id since it's not in servers list
-    const dataId = requestedServer.length > 0 ? requestedServer[0].data_id : id.split("?ep=").pop(); // epID
     const streamingLink = await decryptSources_v1(
       id,
-      dataId,
+      requestedServer[0].data_id,
       name,
-      type,
-      fallback
+      type
     );
     return { streamingLink, servers };
   } catch (error) {

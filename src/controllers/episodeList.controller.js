@@ -10,20 +10,10 @@ export const getEpisodes = async (req,res) => {
     //   return cachedResponse;
     // }
     const data = await extractEpisodesList(encodeURIComponent(id));
-    // Transform the episodes to match the desired schema
-    const transformedData = {
-      totalEpisodes: data.totalEpisodes,
-      episodes: data.episodes.map(ep => ({
-        title: ep.title,
-        episodeId: ep.id,
-        number: ep.episode_no,
-        isFiller: ep.filler
-      }))
-    };
-    // setCachedData(cacheKey, transformedData).catch((err) => {
+    // setCachedData(cacheKey, data).catch((err) => {
     //   console.error("Failed to set cache:", err);
     // });
-    return transformedData;
+    return data;
   } catch (e) {
     console.error("Error fetching episodes:", e);
     return e;

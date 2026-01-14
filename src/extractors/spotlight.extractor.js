@@ -18,13 +18,13 @@ async function extractSpotlights() {
             "div.deslide-item > div.deslide-cover > div.deslide-cover-img > img.film-poster-img"
           )
           .attr("data-src");
-        const title = $(ele)
+        const name = $(ele)
           .find(
             "div.deslide-item > div.deslide-item-content > div.desi-head-title"
           )
           .text()
           .trim();
-        const japanese_title = $(ele)
+        const jname = $(ele)
           .find(
             "div.deslide-item > div.deslide-item-content > div.desi-head-title"
           )
@@ -80,25 +80,23 @@ async function extractSpotlights() {
               tvInfo[key] = value;
             })
         );
-        const episodes = {
-          sub: tvInfo.episodeInfo?.sub ? parseInt(tvInfo.episodeInfo.sub) : null,
-          dub: tvInfo.episodeInfo?.dub ? parseInt(tvInfo.episodeInfo.dub) : null,
-        };
         return {
+          id: id || "",
+          name: name || "",
+          jname: jname || "",
+          poster: poster || "",
+          description: description || "",
           rank: ind + 1,
-          id,
-          name: title,
-          description,
-          poster,
-          jname: japanese_title,
-          episodes,
-          type: tvInfo.showType,
           otherInfo: [
-            tvInfo.showType,
-            tvInfo.duration,
-            tvInfo.releaseDate,
-            tvInfo.quality,
+            tvInfo.showType || "",
+            tvInfo.duration || "",
+            tvInfo.releaseDate || "",
+            tvInfo.quality || "",
           ],
+          episodes: {
+            sub: (tvInfo.episodeInfo && Number(tvInfo.episodeInfo.sub)) || 0,
+            dub: (tvInfo.episodeInfo && Number(tvInfo.episodeInfo.dub)) || 0,
+          },
         };
       })
       .get();
