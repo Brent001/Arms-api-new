@@ -71,9 +71,9 @@ async function extractAnimeInfo(id) {
         key === "Genres" || key === "Producers"
           ? $(el)
               .find("a")
-              .map((_, a) => $(a).text().split(" ").join("-").trim())
+              .map((_, a) => $(a).text().trim())
               .get()
-          : $(el).find(".name").text().split(" ").join("-").trim();
+          : $(el).find(".name").text().trim();
       animeInfo[key] = value;
     });
 
