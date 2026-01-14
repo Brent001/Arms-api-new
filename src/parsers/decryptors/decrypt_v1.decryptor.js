@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 import * as cheerio from "cheerio";
 import { v1_base_url } from "../../utils/base_v1.js";
 import { v4_base_url } from "../../utils/base_v4.js";
-import { fallback_1, fallback_2 } from "../../utils/fallback.js";
+import { fallback_1, fallback_2, fallback_3 } from "../../utils/fallback.js";
 
 export async function decryptSources_v1(epID, id, name, type, fallback) {
   try {
@@ -13,12 +13,14 @@ export async function decryptSources_v1(epID, id, name, type, fallback) {
     if (fallback) {
       const fallback_server = ["hd-1", "hd-3"].includes(name.toLowerCase())
         ? fallback_1
-        : fallback_2;
+        : name.toLowerCase() === "hd-4" ? fallback_3 : fallback_2;
 
-      iframeURL = `https://${fallback_server}/stream/s-2/${epID}/${type}`;
+      const streamSegment = fallback_server === fallback_3 ? "s-3" : "s-2";
+
+      iframeURL = `https://${fallback_server}/stream/${streamSegment}/${epID}/${type}`;
 
       const { data } = await axios.get(
-        `https://${fallback_server}/stream/s-2/${epID}/${type}`,
+        `https://${fallback_server}/stream/${streamSegment}/${epID}/${type}`,
         {
           headers: {
             Referer: `https://${fallback_server}/`,
@@ -26,8 +28,15 @@ export async function decryptSources_v1(epID, id, name, type, fallback) {
         },
       );
       
-      const $ = cheerio.load(data);
-      const dataId = $("#megaplay-player").attr("data-id");
+      let dataId;
+      if (fallback_server === fallback_3) {
+        // For hd-4, data-id is the epID
+        dataId = epID;
+      } else {
+        const $ = cheerio.load(data);
+        dataId = $("#megaplay-player").attr("data-id");
+      }
+      
       const { data: decryptedData } = await axios.get(
         `https://${fallback_server}/stream/getSources?id=${dataId}`,
         {

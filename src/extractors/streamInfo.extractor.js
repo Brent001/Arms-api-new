@@ -47,14 +47,16 @@ async function extractStreamingInfo(id, name, type, fallback) {
           server.type.toLowerCase() === "raw"
       );
     }
-    if (requestedServer.length === 0) {
+    if (requestedServer.length === 0 && !(fallback && name.toLowerCase() === "hd-4")) {
       throw new Error(
         `No matching server found for name: ${name}, type: ${type}`
       );
     }
+    // For hd-4 fallback, use a dummy data_id since it's not in servers list
+    const dataId = requestedServer.length > 0 ? requestedServer[0].data_id : id.split("?ep=").pop(); // epID
     const streamingLink = await decryptSources_v1(
       id,
-      requestedServer[0].data_id,
+      dataId,
       name,
       type,
       fallback
