@@ -49,32 +49,12 @@ export const getAnimeInfo = async (req, res) => {
       })
     );
 
-    // --- FIX START ---
-    // 1. Map the seasons and check for the current ID inside the map
     const seasonsList = (seasons || []).map((s) => ({
       id: s.id,
       name: s.title,
       title: s.season,
       poster: s.season_poster,
-      isCurrent: s.id === animeData.id, // Mark true if IDs match
     }));
-
-    // 2. Check if the current anime was found in the seasons list
-    const currentSeasonExists = seasonsList.some((s) => s.id === animeData.id);
-
-    // 3. Only add it manually if it wasn't found in the list
-    if (!currentSeasonExists) {
-      const currentTitle =
-        animeData.showType === "TV" ? "Season 1" : animeData.title;
-      seasonsList.unshift({
-        id: animeData.id,
-        name: animeData.title,
-        title: currentTitle,
-        poster: animeData.poster,
-        isCurrent: true,
-      });
-    }
-    // --- FIX END ---
 
     // Process titles (Standardize Movie titles)
     seasonsList.forEach((s) => {
